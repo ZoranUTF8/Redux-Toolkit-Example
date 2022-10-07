@@ -282,7 +282,7 @@ export const { clearCart } = cartSlice.actions;
 ```
 
 - create action
-
+ //! OLD WAY
 ```js
 const ACTION_TYPE = 'ACTION_TYPE';
 
@@ -495,6 +495,7 @@ return (
 ```
 
 #### modal slice
+
 
 - create features/modal/modalSlice.js
 
