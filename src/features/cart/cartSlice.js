@@ -1,8 +1,16 @@
-import { createSlice } from "@reduxjs/toolkit";
-import cartItems from "../../cartItems";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+// import cartItems from "../../cartItems"; //? dummy local data
+
+const cartItemsUrl = "https://course-api.com/react-useReducer-cart-project";
+// ! We have the extra lifecycle actions fir every function we create
+export const getCartItems = createAsyncThunk("cart/getCartItems", () => {
+  return fetch(cartItemsUrl)
+    .then((resp) => resp.json())
+    .catch((err) => console.log(err));
+});
 
 const initialState = {
-  cartItems: cartItems,
+  cartItems: [],
   amount: 0,
   total: 0,
   isLoading: true,
@@ -11,6 +19,7 @@ const initialState = {
 const cartSlice = createSlice({
   name: "cart",
   initialState,
+
   reducers: {
     clearCart: (state) => {
       state.cartItems = [];
@@ -33,6 +42,7 @@ const cartSlice = createSlice({
           if (cartItem.amount > 0) {
             cartItem.amount = cartItem.amount - 1;
           }
+          break;
         default:
           console.log("No such option");
           break;
@@ -49,6 +59,21 @@ const cartSlice = createSlice({
 
       state.amount = totalAmount;
       state.total = totalPrice.toFixed(2);
+    },
+  },
+  // ? once the data is fetched add it to the state
+  extraReducers: {
+    [getCartItems.pending]: (state) => {
+      state.isLoading = true;
+    },
+    [getCartItems.fulfilled]: (state, action) => {
+      // console.log(action);
+
+      state.isLoading = false;
+      state.cartItems = action.payload;
+    },
+    [getCartItems.rejected]: (state) => {
+      state.isLoading = false;
     },
   },
 });
